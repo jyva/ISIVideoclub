@@ -1,0 +1,69 @@
+﻿{% extends 'base.html' %}
+{% block content %}
+<h1>{{ 'Gestión de Socios' if current_user.es_admin else 'Mis Datos de Socio' }}</h1>
+
+{% if current_user.es_admin %}
+<div class="card mb-4 shadow-sm">
+    <div class="card-header fw-bold">Alta de Nuevo Socio</div>
+    <div class="card-body">
+        <form method="POST" class="row g-3">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="col-md-3">
+                <label for="soc_nombre" class="form-label">Nombre Completo *</label>
+                <input id="soc_nombre" type="text" name="nombre" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <label for="soc_edad" class="form-label">Edad *</label>
+                <input id="soc_edad" type="number" min="1" max="120" name="edad" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label for="soc_vc" class="form-label">Videoclub de Registro *</label>
+                <select id="soc_vc" name="videoclub_codigo" class="form-select" required>
+                    {% for vc in videoclubs %}
+                    <option value="{{ vc.codigo }}">#{{ vc.codigo }} - {{ vc.ciudad }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="soc_user" class="form-label">Usuario *</label>
+                <input id="soc_user" type="text" name="username" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <label for="soc_pass" class="form-label">Contraseña (mín. 8) *</label>
+                <input id="soc_pass" type="password" minlength="8" name="password" class="form-control" required>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-info text-white">Registrar Socio</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+<table class="table table-bordered bg-white shadow-sm align-middle">
+    <caption class="visually-hidden">Datos de socios de la cadena APPV</caption>
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">Código Socio</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Edad</th>
+            <th scope="col">Videoclub de Alta</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in socios %}
+        <tr>
+            <form method="POST" action="{{ url_for('editar_socio', codigo=s.codigo) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <td><strong>#{{ s.codigo }}</strong></td>
+                <td><input type="text" name="nombre" value="{{ s.nombre }}" aria-label="Nombre socio {{ s.codigo }}" class="form-control form-control-sm" required></td>
+                <td><input type="number" min="1" max="120" name="edad" value="{{ s.edad }}" aria-label="Edad socio {{ s.codigo }}" class="form-control form-control-sm" required></td>
+                <td>#{{ s.videoclub_registro.codigo }} - {{ s.videoclub_registro.ciudad }}</td>
+                <td><button type="submit" class="btn btn-sm btn-warning">Actualizar Datos</button></td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

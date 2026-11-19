@@ -1,0 +1,69 @@
+﻿{% extends 'base.html' %}
+{% block content %}
+<div class="p-4 mb-4 bg-white rounded-3 shadow-sm border">
+    <h1 class="display-6 fw-bold">Sistema de Gestión APPV</h1>
+    <p class="lead text-muted">
+        {{ 'Panel de administración global y control estadístico mensual.' if current_user.es_admin else 'Bienvenido a la red de videoclubs APPV. Puedes alquilar películas en cualquiera de nuestras sucursales.' }}
+    </p>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5 card-title">Videoclubs de la Cadena</h2>
+                <p class="display-6 fw-bold text-primary">{{ stats.videoclubs }}</p>
+                <a href="{{ url_for('gestionar_videoclubs') }}" class="btn btn-sm btn-outline-primary">Ver Videoclubs</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5 card-title">Catálogo de Películas</h2>
+                <p class="display-6 fw-bold text-success">{{ stats.peliculas }}</p>
+                <a href="{{ url_for('gestionar_peliculas') }}" class="btn btn-sm btn-outline-success">Explorar Catálogo</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5 card-title">{{ 'Alquileres Totales' if current_user.es_admin else 'Mis Alquileres' }}</h2>
+                <p class="display-6 fw-bold text-warning">{{ stats.alquileres }}</p>
+                <a href="{{ url_for('gestionar_alquileres') }}" class="btn btn-sm btn-outline-warning">Gestionar Alquileres</a>
+            </div>
+        </div>
+    </div>
+
+    {% if current_user.es_admin %}
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5 card-title">Socios Registrados</h2>
+                <p class="display-6 fw-bold text-info">{{ stats.socios }}</p>
+                <a href="{{ url_for('gestionar_socios') }}" class="btn btn-sm btn-outline-info">Gestionar Socios</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-danger">
+            <div class="card-body">
+                <h2 class="h5 card-title text-danger">Estadísticas Mensuales</h2>
+                <p class="display-6 fw-bold text-danger">{{ stats.estadisticas }}</p>
+                <a href="{{ url_for('gestionar_estadisticas') }}" class="btn btn-sm btn-danger">Calcular Estadísticas</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5 card-title">Administradores</h2>
+                <p class="display-6 fw-bold text-secondary">{{ stats.administradores }}</p>
+                <a href="{{ url_for('gestionar_administradores') }}" class="btn btn-sm btn-outline-secondary">Gestionar</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

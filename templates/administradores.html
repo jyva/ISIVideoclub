@@ -1,0 +1,50 @@
+﻿{% extends 'base.html' %}
+{% block content %}
+<h1>Gestión de Administradores</h1>
+<div class="card mb-4 shadow-sm">
+    <div class="card-header fw-bold">Registrar Nuevo Administrador</div>
+    <div class="card-body">
+        <form method="POST" class="row g-3">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="col-md-4">
+                <label for="adm_nombre" class="form-label">Nombre del Administrador *</label>
+                <input id="adm_nombre" type="text" name="nombre" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label for="adm_user" class="form-label">Usuario de Acceso *</label>
+                <input id="adm_user" type="text" name="username" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label for="adm_pass" class="form-label">Contraseña (mín. 8 car.) *</label>
+                <input id="adm_pass" type="password" minlength="8" name="password" class="form-control" required>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-secondary w-100">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<table class="table table-bordered bg-white shadow-sm align-middle">
+    <caption class="visually-hidden">Listado de administradores</caption>
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">Código</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for admin in administradores %}
+        <tr>
+            <form method="POST" action="{{ url_for('editar_administrador', codigo=admin.codigo) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <td><strong>#{{ admin.codigo }}</strong></td>
+                <td><input type="text" name="nombre" value="{{ admin.nombre }}" aria-label="Nombre administrador {{ admin.codigo }}" class="form-control form-control-sm" required></td>
+                <td><button type="submit" class="btn btn-sm btn-warning">Actualizar</button></td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

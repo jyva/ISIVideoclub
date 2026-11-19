@@ -1,0 +1,67 @@
+﻿{% extends 'base.html' %}
+{% block content %}
+<h1>Estadísticas Mensuales de Gasto por Socio</h1>
+<div class="card mb-4 shadow-sm">
+    <div class="card-header fw-bold">
+        Generar Estadística Mensual (Administrador activo: #{{ current_user.administrador.codigo }} - {{ current_user.administrador.nombre }})
+    </div>
+    <div class="card-body">
+        <form method="POST" class="row g-3">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="col-md-5">
+                <label for="est_socio" class="form-label">Socio a estudiar *</label>
+                <select id="est_socio" name="socio_codigo" class="form-select" required>
+                    {% for s in socios %}
+                    <option value="{{ s.codigo }}">#{{ s.codigo }} - {{ s.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="est_mes" class="form-label">Mes de Estudio *</label>
+                <select id="est_mes" name="mes_estudio" class="form-select" required>
+                    {% for num_mes, nombre_mes in meses.items() %}
+                    <option value="{{ num_mes }}">{{ nombre_mes }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="est_anio" class="form-label">Año de Estudio *</label>
+                <select id="est_anio" name="anio_estudio" class="form-select" required>
+                    {% for a in anios %}
+                    <option value="{{ a }}" {% if a == anio_actual %}selected{% endif %}>{{ a }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-danger">Calcular y Guardar Estadística</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<table class="table table-bordered bg-white shadow-sm align-middle">
+    <caption class="visually-hidden">Estadísticas mensuales registradas</caption>
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">Cód. Estadística</th>
+            <th scope="col">Socio</th>
+            <th scope="col">Mes</th>
+            <th scope="col">Año</th>
+            <th scope="col">Total Gastado (Derivado)</th>
+            <th scope="col">Generada por Admin</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for est in estadisticas %}
+        <tr>
+            <td><strong>#{{ est.codigo }}</strong></td>
+            <td>#{{ est.socio.codigo }} - {{ est.socio.nombre }}</td>
+            <td>{{ meses[est.mes_estudio] }}</td>
+            <td>{{ est.anio_estudio }}</td>
+            <td><strong class="text-success">{{ "%.2f"|format(est.total_gastado) }} €</strong></td>
+            <td>#{{ est.administrador.codigo }} - {{ est.administrador.nombre }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

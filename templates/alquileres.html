@@ -1,0 +1,87 @@
+﻿{% extends 'base.html' %}
+{% block content %}
+<h1>{{ 'Gestión Global de Alquileres' if current_user.es_admin else 'Mis Alquileres en la Cadena APPV' }}</h1>
+<div class="card mb-4 shadow-sm">
+    <div class="card-header fw-bold">Nuevo Alquiler (Todas las películas seleccionadas compartirán las mismas fechas)</div>
+    <div class="card-body">
+        <form method="POST" class="row g-3">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% if current_user.es_admin %}
+            <div class="col-md-4">
+                <label for="alq_socio" class="form-label">Socio *</label>
+                <select id="alq_socio" name="socio_codigo" class="form-select" required>
+                    {% for s in socios %}
+                    <option value="{{ s.codigo }}">#{{ s.codigo }} - {{ s.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+            <div class="col-md-4">
+                <label for="alq_recogida" class="form-label">Fecha de Recogida (Común para todas) *</label>
+                <input id="alq_recogida" type="date" name="fecha_recogida" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label for="alq_devolucion" class="form-label">Fecha de Devolución (Común para todas) *</label>
+                <input id="alq_devolucion" type="date" name="fecha_devolucion" class="form-control" required>
+            </div>
+            <div class="col-12">
+                <span class="form-label d-block fw-semibold">Seleccionar Películas (marca una o varias) *</span>
+                <div class="border rounded p-3 bg-light" style="max-height: 220px; overflow-y: auto;">
+                    {% for p in peliculas %}
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" name="peliculas_codigos" value="{{ p.codigo }}" id="pel_chk_{{ p.codigo }}">
+                        <label class="form-check-label" for="pel_chk_{{ p.codigo }}">
+                            <strong>[Cód. #{{ p.codigo }}] {{ p.nombre }}</strong> — {{ "%.2f"|format(p.precio_alquiler) }} €
+                            <span class="text-muted small">(Videoclub #{{ p.videoclub.codigo }} - {{ p.videoclub.ciudad }})</span>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-warning">Confirmar Alquiler</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<table class="table table-bordered bg-white shadow-sm align-middle">
+    <caption class="visually-hidden">Historial de alquileres</caption>
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">Cód. Alquiler</th>
+            <th scope="col">Socio</th>
+            <th scope="col">Películas Incluidas (Mismas fechas)</th>
+            <th scope="col">Fecha Recogida</th>
+            <th scope="col">Fecha Devolución</th>
+            <th scope="col">Total a Pagar (Derivado)</th>
+            <th scope="col">Ampliar / Editar Devolución</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for alq in alquileres %}
+        <tr>
+            <td><strong>#{{ alq.codigo }}</strong></td>
+            <td>#{{ alq.socio.codigo }} - {{ alq.socio.nombre }}</td>
+            <td>
+                <ul class="mb-0 ps-3">
+                    {% for p in alq.peliculas %}
+                    <li>#{{ p.codigo }} {{ p.nombre }} ({{ "%.2f"|format(p.precio_alquiler) }} €)</li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td><span class="badge bg-secondary">{{ alq.fecha_recogida }}</span></td>
+            <td><span class="badge bg-info text-dark">{{ alq.fecha_devolucion }}</span></td>
+            <td><strong>{{ "%.2f"|format(alq.total_pagar) }} €</strong></td>
+            <td>
+                <form method="POST" action="{{ url_for('editar_alquiler', codigo=alq.codigo) }}" class="d-flex gap-2 align-items-center">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="date" name="fecha_devolucion" value="{{ alq.fecha_devolucion }}" aria-label="Nueva fecha devolución alquiler {{ alq.codigo }}" class="form-control form-control-sm" required>
+                    <button type="submit" class="btn btn-sm btn-primary">Actualizar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

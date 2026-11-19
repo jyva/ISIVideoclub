@@ -1,0 +1,71 @@
+﻿{% extends 'base.html' %}
+{% block content %}
+<h1>Videoclubs de la Cadena APPV</h1>
+
+{% if current_user.es_admin %}
+<div class="card mb-4 shadow-sm">
+    <div class="card-header fw-bold">Registrar Nuevo Videoclub</div>
+    <div class="card-body">
+        <form method="POST" class="row g-3">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="col-md-3">
+                <label for="vc_gerente" class="form-label">Nombre del Gerente *</label>
+                <input id="vc_gerente" type="text" name="nombre_gerente" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label for="vc_ciudad" class="form-label">Ciudad *</label>
+                <input id="vc_ciudad" type="text" name="ciudad" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label for="vc_calle" class="form-label">Calle *</label>
+                <input id="vc_calle" type="text" name="calle" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <label for="vc_cp" class="form-label">Código Postal (5 díg.) *</label>
+                <input id="vc_cp" type="text" name="codigo_postal" maxlength="5" minlength="5" pattern="\d{5}" class="form-control" required>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Guardar Videoclub</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+<table class="table table-bordered bg-white shadow-sm align-middle">
+    <caption class="visually-hidden">Listado de videoclubs de la cadena APPV</caption>
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">Código</th>
+            <th scope="col">Gerente</th>
+            <th scope="col">Ciudad</th>
+            <th scope="col">Calle</th>
+            <th scope="col">C.P.</th>
+            {% if current_user.es_admin %}<th scope="col">Acciones</th>{% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for vc in videoclubs %}
+        <tr>
+            {% if current_user.es_admin %}
+            <form method="POST" action="{{ url_for('editar_videoclub', codigo=vc.codigo) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <td><strong>#{{ vc.codigo }}</strong></td>
+                <td><input type="text" name="nombre_gerente" value="{{ vc.nombre_gerente }}" aria-label="Gerente videoclub {{ vc.codigo }}" class="form-control form-control-sm" required></td>
+                <td><input type="text" name="ciudad" value="{{ vc.ciudad }}" aria-label="Ciudad videoclub {{ vc.codigo }}" class="form-control form-control-sm" required></td>
+                <td><input type="text" name="calle" value="{{ vc.calle }}" aria-label="Calle videoclub {{ vc.codigo }}" class="form-control form-control-sm" required></td>
+                <td><input type="text" name="codigo_postal" value="{{ vc.codigo_postal }}" maxlength="5" pattern="\d{5}" aria-label="Código postal videoclub {{ vc.codigo }}" class="form-control form-control-sm" required></td>
+                <td><button type="submit" class="btn btn-sm btn-warning">Actualizar</button></td>
+            </form>
+            {% else %}
+            <td><strong>#{{ vc.codigo }}</strong></td>
+            <td>{{ vc.nombre_gerente }}</td>
+            <td>{{ vc.ciudad }}</td>
+            <td>{{ vc.calle }}</td>
+            <td>{{ vc.codigo_postal }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

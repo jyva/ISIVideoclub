@@ -1,0 +1,43 @@
+﻿{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white fw-bold">Registro de Nuevo Socio en la Cadena APPV</div>
+            <div class="card-body">
+                <p class="text-muted small">Al registrarte con tus datos personales podrás alquilar películas en cualquier videoclub de la cadena.</p>
+                <form method="POST" class="row g-3">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="col-md-6">
+                        <label for="reg_nombre" class="form-label">Nombre Completo *</label>
+                        <input id="reg_nombre" type="text" name="nombre" class="form-control" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="reg_edad" class="form-label">Edad *</label>
+                        <input id="reg_edad" type="number" min="1" max="120" name="edad" class="form-control" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="reg_vc" class="form-label">Videoclub de Alta *</label>
+                        <select id="reg_vc" name="videoclub_codigo" class="form-select" required>
+                            {% for vc in videoclubs %}
+                            <option value="{{ vc.codigo }}">#{{ vc.codigo }} - {{ vc.ciudad }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="reg_user" class="form-label">Nombre de Usuario *</label>
+                        <input id="reg_user" type="text" name="username" class="form-control" autocomplete="username" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="reg_pass" class="form-label">Contraseña (mín. 8 caracteres) *</label>
+                        <input id="reg_pass" type="password" minlength="8" name="password" class="form-control" autocomplete="new-password" required>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-info text-white w-100">Completar Registro</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

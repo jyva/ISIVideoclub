@@ -1,0 +1,30 @@
+﻿{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white fw-bold">Acceso a Cadena APPV</div>
+            <div class="card-body">
+                <form method="POST" class="row g-3">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="col-12">
+                        <label for="login_user" class="form-label">Usuario *</label>
+                        <input id="login_user" type="text" name="username" class="form-control" autocomplete="username" required>
+                    </div>
+                    <div class="col-12">
+                        <label for="login_pass" class="form-label">Contraseña *</label>
+                        <input id="login_pass" type="password" name="password" class="form-control" autocomplete="current-password" required>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                    </div>
+                </form>
+                <hr>
+                <p class="text-center mb-0">
+                    ¿Aún no eres socio? <a href="{{ url_for('registro') }}">Regístrate aquí</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
